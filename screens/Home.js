@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, {Component} from 'react';
 import {Share, ActivityIndicator} from 'react-native';
-import {
+import { ///JJJJJ
   Container,
   Header,
   Content,
