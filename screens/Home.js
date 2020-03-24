@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React, {Component} from 'react';
 import {Share, ActivityIndicator} from 'react-native';
+import { AsyncStorage } from "react-native";
 import { ///JJJJJ
   Container,
   Header,
@@ -32,7 +33,8 @@ export default class Home extends Component {
       loading: false,
       modalVisible: false,
       getData: [],
-      username:"",  
+      username:"",
+      password:"",
     };
   }
 
@@ -72,41 +74,21 @@ export default class Home extends Component {
     };
   };
 
-  componentDidMount() {
-    this.props.navigation.setParams({handleRemove: this.removeVehicle});
-  }
-
-  removeVehicle = () => {
-    this.setState({modalVisible: !this.state.modalVisible});
-  };
-
-  onShare = async () => {
+  _storeData = async () => {
     try {
-      const result = await Share.share({
-        title: 'El titulo',
-        url:
-          'http://img.culturacolectiva.com/content/2017/06/1d56bcb1-bf9f-4b15-8319-531f0eb72d7d-high.jpg',
-        message:
-          'Esta obra está considerada como uno de los máximos ejemplos de la etapa de mayor madurez artística de Tamayo. Representa a un hombre, una mujer y una figura andrógina de aspecto impreciso. Este cuadro tiene una particular historia detrás: fue robado en 1987 y hallada hasta 2003 en un contenedor de basura por la ciudadana neoyorquina Elizabeth Gibson.',
-      });
-
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
+      //guardar el primer elemento.
+      await AsyncStorage.setItem('username', '');
+      await AsyncStorage.setItem('password', '');
+      //this.props.navigation.push('Info');
     } catch (error) {
-      alert(error.message);
+      // Error saving data
     }
   };
-
+  
   render() {
     const { navigation } = this.props;
-    const name = navigation.getParam('username');
+    const username = navigation.getParam('username');
+    const password = navigation.getParam('password');
 
     if (this.state.loading) {
       return (
@@ -118,9 +100,14 @@ export default class Home extends Component {
     return (
       <Container>
         <Header>
-          <Text>Welcome: {name}</Text>
+          <Text>Welcome: {username}</Text>
           
         </Header>
+
+        <Body>
+        <Text>Password: {password}</Text>
+        </Body>
+
         <Content />
       </Container>
     );

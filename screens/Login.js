@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { AsyncStorage } from "react-native";
 import {
   Text,
   View,
@@ -19,53 +20,46 @@ export default class Demo extends Component {
     this.imageHeight = new Animated.Value(IMAGE_HEIGHT);
   }
   state = {
-    username: 'demos',
-    password: 'demos',
+    username: 'User',
+    password: 'Password',
   };
 
-  static navigationOptions = {header: null};
+    // create a function that saves your data asyncronously
+    _storeData = async () => {
+      try {
+        const nameValue = await AsyncStorage.getItem('username');
+        const passwordValue = await AsyncStorage.getItem('password');
 
-  componentWillMount() {
-    this.keyboardWillShowSub = Keyboard.addListener(
-      'keyboardWillShow',
-      this.keyboardWillShow,
-    );
-    this.keyboardWillHideSub = Keyboard.addListener(
-      'keyboardWillHide',
-      this.keyboardWillHide,
-    );
+        if (nameValue !== null && passwordValue !== null) {
+          // Our data is fetched successfully
+          this.setState({
+            username: nameValue,
+            password: passwordValue,
+          });
+        }
+
+      } catch (error) {
+          // Error saving data
+      }
   }
 
-  componentWillUnmount() {
-    this.keyboardWillShowSub.remove();
-    this.keyboardWillHideSub.remove();
-  }
-
-  keyboardWillShow = event => {
-    Animated.parallel([
-      Animated.timing(this.keyboardHeight, {
-        duration: event.duration,
-        toValue: event.endCoordinates.height,
-      }),
-      Animated.timing(this.imageHeight, {
-        duration: event.duration,
-        toValue: IMAGE_HEIGHT_SMALL,
-      }),
-    ]).start();
-  };
-
-  keyboardWillHide = event => {
-    Animated.parallel([
-      Animated.timing(this.keyboardHeight, {
-        duration: event.duration,
-        toValue: 0,
-      }),
-      Animated.timing(this.imageHeight, {
-        duration: event.duration,
-        toValue: IMAGE_HEIGHT,
-      }),
-    ]).start();
-  };
+      // fetch the data back asyncronously
+      _retrieveData = async () => {
+        try {
+          const nameValue = await AsyncStorage.getItem('username');
+          const passwordValue = await AsyncStorage.getItem('password');
+          if (nameValue !== null) {
+            // Our data is fetched successfully
+            this.setState({
+              username: nameValue,
+              password: passwordValue,
+              
+            });
+          }
+        } catch (error) {
+          // Error retrieving data
+        }
+      };
 
   render() {
     return (
